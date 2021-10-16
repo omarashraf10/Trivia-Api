@@ -87,19 +87,134 @@ GET ...
 POST ...
 DELETE ...
 
-GET '/api/v1.0/categories'
+
+GET \categories 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Example response:
+{
+    "success": true,
+    "categories": {
+        "1": "Science", 
+        "2": "Art", 
+        "3": "Geography", 
+        "4": "History", 
+        "5": "Entertainment", 
+        "6": "Sports"
+    }
+}
 
+
+GET \questions?page=<page_number> Fetches a paginated dictionary of questions of all available categories
+
+Request parameters (optional): page:int
+Example response:
+{
+ "success": true,
+ "questions": [
+   {
+     "answer": "Maya Angelou", 
+     "category": 4, 
+     "difficulty": 2, 
+     "id": 5, 
+     "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+   },  
+   {
+     "answer": "Escher", 
+     "category": 2, 
+     "difficulty": 1, 
+     "id": 16, 
+     "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+   }
+ ],
+ "total_questions": 2,  
+ "categories": {
+   "1": "Science", 
+   "2": "Art", 
+   "3": "Geography", 
+   "4": "History", 
+   "5": "Entertainment", 
+   "6": "Sports"
+ }, 
+ "current_category": null
+}
+
+DELETE /questions/<question_id> Delete an existing questions from the repository of available questions
+
+Request arguments: question_id:int
+Example response:
+{
+  "deleted": "28", 
+  "success": true
+}
+
+
+GET /categories/<int:category_id>/questions Fetches a dictionary of questions for the specified category
+
+Request argument: category_id:int
+Example response:
+{
+  "current_category": 1, 
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }, 
+    {
+      "answer": "Alexander Fleming", 
+      "category": 1, 
+      "difficulty": 3, 
+      "id": 21, 
+      "question": "Who discovered penicillin?"
+    }, 
+  ], 
+  "success": true, 
+  "total_questions": 2
+}
+
+POST /questions Add a new question to the repository of available questions or fetches all questions where a substring matches the search term (not case-sensitive) based on the request body
+
+Request body (to add new question): {question:string, answer:string, difficulty:int, category:string}
+
+Example response:
+{
+  "created": 29, 
+  "success": true
+}
+Request body (to search for questions): {searchTerm:string}
+{
+  "current_category": null, 
+  "questions": [
+    {
+      "answer": "Lisbon", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 29, 
+      "question": "What is the capital of Portugal?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 1
+}
+
+POST /quizzes Fetches one random question within a specified category. Previously asked questions are not asked again.
+
+Request body: {previous_questions: arr, quiz_category: {id:int, type:string}}
+Example response:
+{
+  "question": {
+    "answer": "The Liver", 
+    "category": 1, 
+    "difficulty": 4, 
+    "id": 20, 
+    "question": "What is the heaviest organ in the human body?"
+  }, 
+  "success": true
+}
 ```
-
 
 ## Testing
 To run the tests, run

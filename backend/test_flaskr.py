@@ -17,7 +17,9 @@ class TriviaTestCase(unittest.TestCase):
         self.database_name = "trivia"
         #self.database_path = "trivia://{}/{}".format(
         #    'localhost:5432', self.database_name)
-        self.database_path ="postgresql://{}:{}@{}/{}".format("postgres","Email1087","localhost:5432",self.database_name)
+        data_base_user_name=os.environ['UserName']
+        data_base_user_password=os.environ['Password']
+        self.database_path ="postgresql://{}:{}@{}/{}".formatdata_base_user_name,data_base_user_password,"localhost:5432",self.database_name)
         setup_db(self.app, self.database_path)
 
         self.new_question = {
@@ -63,6 +65,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "resource not found")
 
+    def test_invalid_category_id(self):
+        """Test for invalid category id"""
+
+        # request with invalid category id 1987
+        response = self.client().get('/categories/jhfsdkj')
+        data = json.loads(response.data)
+
+        # Assertions to ensure 422 error is returned
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
     def test_delete_question(self):
         question = Question(question="delete question", answer="new answer",
                             difficulty=1, category=1)
@@ -76,6 +90,14 @@ class TriviaTestCase(unittest.TestCase):
         
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
+
+    def test_delete_question_with_invalid_id(self):
+        response = self.client().delete('/questions/hhhhhh')
+        data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'unprocessable')   
 
     def test_create_question(self):
         """Tests question creation"""
